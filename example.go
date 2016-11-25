@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"runtime"
+	//"sync"
 )
 
 type Page struct{
@@ -41,14 +42,15 @@ func GetFirstPage(url string, crawledPages map[string]int){
 		fmt.Println(res.StatusCode)
 	}
 }
-//
+
 //func GoGetPages(urls []string) /*[]string*/{
 //	pageurls := []string{}
 //	var wg sync.WaitGroup
 //	for _, url := range urls  {
 //		wg.Add(1)
 //		go func(url string){
-//			defer wg.Done()
+//			defer wg.
+//			Done()
 //			fmt.Println(url)
 //			pageurls = GetFirstPage(url)
 //		}(url)
@@ -58,15 +60,19 @@ func GetFirstPage(url string, crawledPages map[string]int){
 //}
 
 func isMatchDomain(url string) int{
-    return strings.Index(url, "://09362f6a.ngrok")
+    return strings.Index(url, "://hair.cm")
 }
 
 func main() {
 	fmt.Println(runtime.NumCPU())
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	url := "https://09362f6a.ngrok.io/article-18/"
+	url := "https://hair.cm/tu/article-27066/"
 	crawledPages := map[string]int{}
 	GetFirstPage(url, crawledPages)
+
+	for url, _ := range crawledPages {
+		GetFirstPage(url, crawledPages)
+	}
 	fmt.Println(crawledPages)
 }
