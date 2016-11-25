@@ -5,8 +5,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
 	"strings"
-	//"sync"
-	"sync"
+	"runtime"
 )
 
 type Page struct{
@@ -20,12 +19,11 @@ type ErrorPages struct {
 	page Page
 }
 
-func GetFirstPage(url string) []string{
-	urls := []string{}
-	crawledPages := map[string]int{}
+func GetFirstPage(url string, crawledPages map[string]int){
 	//http getでresponse codeを見る
+	fmt.Println("start crawl" + url)
 	res, _ := http.Get(url)
-	defer res.Body.Close()
+	//defer res.Body.Close()
 	//200なら
 	if res.StatusCode == 200{
 		//中身のhrefを取得する。
@@ -36,18 +34,12 @@ func GetFirstPage(url string) []string{
 				if _, ok:= crawledPages[nextUrl]; ok{
 				}else{
 					crawledPages[nextUrl] = 200
-					fmt.Println(url + " --->" + nextUrl)
-					var wg sync.WaitGroup
-					wg.Add(1)
-					crawledPages[url] = 200
-					go GetFirstPage(nextUrl)
 				}
 			}
 		})
 	}else{
 		fmt.Println(res.StatusCode)
 	}
-	return urls
 }
 //
 //func GoGetPages(urls []string) /*[]string*/{
@@ -70,6 +62,11 @@ func isMatchDomain(url string) int{
 }
 
 func main() {
-	url := "https://09362f6a.ngrok.io"
-	GetFirstPage(url)
+	fmt.Println(runtime.NumCPU())
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	url := "https://09362f6a.ngrok.io/article-18/"
+	crawledPages := map[string]int{}
+	GetFirstPage(url, crawledPages)
+	fmt.Println(crawledPages)
 }
